@@ -39,46 +39,62 @@ def data_clear(base_path = 'trading', base_name = 'trading_2023_05', save_name='
 
     df.drop(columns=col_for_drop, inplace=True)
 
+    return df
 
-    df = df.replace('', '0') # замена пропусков 0
-    for col_name in df.columns[1:]: # приведение числовых данных во всех столбцах кроме url к виду который можно перевести в числовой
+
+
+def data_to_numeric(df, save_name='trading_06_23.csv'):
+    df = df.replace('', '0')
+    for col_name in df.columns[1:]:
         for data in df[col_name]:
             if data != '':
                 if data[-1] == 'M':
-                    data_dict_replace = {}
-                    if data[0] == '−':
-                        value = -float(data[1:-1])*1e6
+                    data_dict_replace1 = {}
+                    if data[0] != '−':
+                        value = float(data[0:-1]) * 1e6
                     else:
-                        value = float(data[:-1])*1e6
-                    data_dict_replace[data] = str(value)
-                    df.replace(data_dict_replace, inplace=True)
-                elif data[-1] == 'B':
-                    data_dict_replace = {}
-                    if data[0] == '−':
-                        value = -float(data[1:-1])*1e9
+                        value = -float(data[1:-1]) * 1e6
+                    data_dict_replace1[data] = str(value)
+                    df.replace(data_dict_replace1, inplace=True)
+
+    for col_name in df.columns[1:]:
+        for data in df[col_name]:
+            if data != '':
+                if data[-1] == 'B':
+                    data_dict_replace1 = {}
+                    if data[0] != '−':
+                        value = float(data[0:-1]) * 1e9
                     else:
-                        value = float(data[:-1])*1e9
-                    data_dict_replace[data] = str(value)
-                    df.replace(data_dict_replace, inplace=True)
-                elif data[-1] == 'K':
-                    data_dict_replace = {}
-                    if data[0] == '−':
-                        value = -float(data[1:-1])*1e3
+                        value = -float(data[1:-1]) * 1e9
+                    data_dict_replace1[data] = str(value)
+                    df.replace(data_dict_replace1, inplace=True)
+
+    for col_name in df.columns[1:]:
+        for data in df[col_name]:
+            if data != '':
+                if data[-1] == 'K':
+                    data_dict_replace1 = {}
+                    if data[0] != '−':
+                        value = float(data[0:-1]) * 1e3
                     else:
-                        value = float(data[:-1])*1e3
-                    data_dict_replace[data] = str(value)
-                    df.replace(data_dict_replace, inplace=True)
-                else:
-                    data_dict_replace = {}
-                    if data[0] == '−':
-                        value = -float(data[1:-1])
-                        data_dict_replace[data] = str(value)
-                    df.replace(data_dict_replace, inplace=True)
+                        value = -float(data[1:-1]) * 1e3
+                    data_dict_replace1[data] = str(value)
+                    df.replace(data_dict_replace1, inplace=True)
+
+    for col_name in df.columns[1:]:
+        for data in df[col_name]:
+            if data != '':
+                data_dict_replace1 = {}
+                if data[0] == '−':
+                    value = -float(data[1:-1])
+                    data_dict_replace1[data] = str(value)
+                    df.replace(data_dict_replace1, inplace=True)
 
     for col in df.columns[1:]:
-        df[col] = df[col].astype(float)# меняем тип данных на числовой
+        df[col] = df[col].astype(float)
 
     df.to_csv(save_name, index=False)
 
 
-data_clear()
+df = data_clear()
+data_to_numeric(df)
